@@ -27,6 +27,7 @@ import com.sk89q.worldguard.bukkit.internal.WGMetadata;
 import com.sk89q.worldguard.bukkit.util.Entities;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.AnimalTamer;
@@ -185,6 +186,22 @@ public final class Cause {
         }
 
         return null;
+    }
+
+    /**
+     * Get the first causing block's current material when its region is owned
+     * by the current thread. A cause may refer to a block in another region
+     * or world, for example the origin of a falling block.
+     *
+     * @return the material, or null if the block cannot be read here
+     */
+    @Nullable
+    public Material getFirstBlockType() {
+        Block block = getFirstBlock();
+        if (block == null || (WorldGuardPlugin.inst().isFolia() && !Bukkit.isOwnedByCurrentRegion(block.getLocation()))) {
+            return null;
+        }
+        return block.getType();
     }
 
     /**
